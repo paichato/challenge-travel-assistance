@@ -1,0 +1,10 @@
+{
+  "name": "challenge-travel-assistance",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/paichato/challenge-travel-assistance.git",
+  "author": "paichato <tsenane14@gmail.com>",
+  "license": "MIT",
+  "workspaces":["client/*", "server/*"],
+  "engines": {"node": "16.16.0"}
+}
