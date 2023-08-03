@@ -1,0 +1,36 @@
+.Container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+
+}
+
+
+.formContainer {
+    /* border: 1px solid var(--gray); */
+    box-shadow: 6px 10px 29px -5px rgba(157, 157, 157, 0.27);
+    -webkit-box-shadow: 6px 10px 29px -5px rgba(157, 157, 157, 0.27);
+    padding: 1rem;
+    width: 500px;
+}
+
+.formContainer h1 {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.loginButton {
+    border: none;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    margin-left: 1rem;
+    text-align: center;
+    align-self: center;
+    color: gray;
+    background-color: transparent;
+    text-decoration: underline;
+}

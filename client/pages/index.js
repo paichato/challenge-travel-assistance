@@ -1,15 +1,29 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import WeatherCard from '../components/WeatherCard'
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+import WeatherCard from "../components/WeatherCard";
+import nookies from "nookies";
+import { http } from "./api/http";
+import { deleteCookies } from "../lib/session";
+import { useRouter } from "next/router";
+import { message } from "antd";
 
-export default function Home() {
+function Home(ctx) {
+  const router = useRouter();
+  const [messageApi, contextHolder] = message.useMessage();
 
-  const Divider=()=>{
-    return <div className={styles.divider}></div>
-  }
+  const handleLogout = async () => {
+    await deleteCookies();
+    router.reload();
+    messageApi.open({
+      type: "warning",
+      content: "Your session has ended.",
+    });
+  };
 
-
+  const Divider = () => {
+    return <div className={styles.divider}></div>;
+  };
 
   return (
     <div className={styles.container}>
@@ -19,74 +33,46 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-
-<main className={styles.main}>
-  <div className={styles.nav}>
-    <h2>Xplore</h2>
-    <div>
-      <button>
-        Login
-      </button>
-    </div>
-  </div>
-  <div className={styles.hero_container}>
-    <section className={styles.leftSection}>
-      <h1>Travel assistance</h1>
-      <p>Liberte o explorador dentro de você e descubra os destinos mais encantadores do mundo.</p>
-      <div>
-        <input placeholder='pesquisar por cidade, ex: Maputo' />
-        <button>
-          Pesquisar
-        </button>
-      </div>
-    </section>
-    <section className={styles.rightSection}>
-      <WeatherCard />
-      <WeatherCard />
-      <WeatherCard />
-    </section>
-  </div>
-</main>
-      {/* <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      <main className={styles.main}>
+        <div className={styles.nav}>
+          <h2>Xplore</h2>
+          <div className={styles.navSessionContainer}>
+            {ctx?.props?.username ? (
+              <>
+                <p>{ctx?.props?.username}</p>
+                <button className={styles.navButton} onClick={handleLogout}>
+                  Logout
+                </button>
+              </>
+            ) : (
+              <button
+                className={styles.navButton}
+                onClick={() => router.push("/login")}
+              >
+                Login
+              </button>
+            )}
+          </div>
         </div>
-      </main> */}
+        <div className={styles.hero_container}>
+          <section className={styles.leftSection}>
+            <h1>Travel assistance</h1>
+            <p>
+              Liberte o explorador dentro de você e descubra os destinos mais
+              encantadores do mundo.
+            </p>
+            <div>
+              <input placeholder="pesquisar por cidade, ex: Maputo" />
+              <button>Pesquisar</button>
+            </div>
+          </section>
+          <section className={styles.rightSection}>
+            <WeatherCard />
+            <WeatherCard />
+            <WeatherCard />
+          </section>
+        </div>
+      </main>
 
       <footer className={styles.footer}>
         <a
@@ -94,12 +80,31 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
+          Powered by paichato
         </a>
       </footer>
     </div>
-  )
+  );
 }
+
+Home.getInitialProps = async (ctx) => {
+  const { "xplore.token": token } = nookies.get(ctx);
+
+  if (!token) return { props: { user: null } };
+
+  const response = await http
+    .get("/validate-user", { headers: { Authorization: `Bearer ${token}` } })
+    .then((res) => {
+      http.defaults.headers.common["Authorization"] = token;
+
+      res.data.session = "active";
+
+      return res.data;
+    })
+    .catch((err) => {});
+
+  if (!response) return { props: { username: null } };
+  return { props: response };
+};
+
+export default Home;
