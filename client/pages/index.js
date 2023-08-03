@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { message } from "antd";
 import { useState } from "react";
 import Card from "../components/Card";
+import CacheCard from "../components/CacheCard";
 
 const data = [
   {
@@ -116,6 +117,7 @@ function Home(ctx) {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchInput, setsearchInput] = useState("");
   const [fetchedData, setFetchedData] = useState([]);
+  const [cache, setCache] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(
     "Pesquise para exibir dados"
@@ -137,6 +139,10 @@ function Home(ctx) {
       .then((response) => {
         const allData = response.data;
         setFetchedData(allData);
+        const tmpArray = cache;
+        tmpArray.push(allData);
+        setCache(tmpArray.reverse());
+        setsearchInput("");
 
         messageApi.open({
           type: "success",
@@ -156,6 +162,16 @@ function Home(ctx) {
         );
       })
       .finally(() => setLoading(false));
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      onSearch();
+    }
+  };
+
+  const handleCacheSelection = (item) => {
+    setFetchedData(item);
   };
 
   return (
@@ -194,27 +210,30 @@ function Home(ctx) {
               Unleash the explorer within you and discover the world's most
               enchanting destinations.
             </p>
-            <div>
+            <div className={styles.searchContainer}>
               <input
+                onKeyDown={handleKeyDown}
                 value={searchInput}
                 onChange={(e) => setsearchInput(e.currentTarget.value)}
                 placeholder="search for a city, ex: Maputo"
               />
               <button onClick={onSearch}>Pesquisar</button>
             </div>
+            <div className={styles.cacheContainer}>
+              {cache.map((i) => (
+                <CacheCard data={i} action={() => handleCacheSelection(i)} />
+              ))}
+            </div>
           </section>
           <section className={styles.rightSection}>
             {fetchedData.length < 1 && <h1>{errorMessage}</h1>}
             {fetchedData.map((i, index) => {
-              console.log("Helo:", Object.keys(i));
-
               return (
                 !Object.keys(i).includes("user") && (
                   <Card
                     type={Object.keys(i)[0]}
                     data={i}
                     user={ctx.props.username ?? ""}
-                    // user={fetchedData[0]}
                   />
                 )
               );

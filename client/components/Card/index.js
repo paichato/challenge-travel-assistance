@@ -6,6 +6,16 @@ function Card({ type, blur, user, data }) {
   console.log("this is the type:", type);
   console.log("this is the USER:", user);
 
+  const weatherConditions = [
+    { id: 800, name: "Clear", img: "/assets/sunny.png" },
+    { id: 2, name: "Thunderstorm", img: "/assets/lightning.png" },
+    { id: 3, name: "Drizzle", img: "/assets/rainy.png" },
+    { id: 5, name: "Rain", img: "/assets/rainy.png" },
+    { id: 6, name: "Snow", img: "/assets/snow.png" },
+    { id: 7, name: "Athmosphere", img: "/assets/cloudy.png" },
+    { id: 801, name: "Clouds", img: "/assets/cloudy.png" },
+  ];
+
   function milFormate(value) {
     var nf = new Intl.NumberFormat("en-IN", {
       minimumFractionDigits: 2,
@@ -18,10 +28,16 @@ function Card({ type, blur, user, data }) {
     return (
       <div className={styles.cardContainer}>
         <div>
-          <h1 className={styles.weatherText}>{data?.weather?.main?.temp} C</h1>
+          <h1 className={styles.weatherText}>
+            {Math.round(data?.weather?.main?.temp)}º C
+          </h1>
           <p>{data?.weather?.weather[0]?.main}</p>
         </div>
-        <img src="/assets/sunny.png" />
+        {weatherConditions.map(
+          (i) =>
+            i.name === data?.weather?.weather[0]?.main && <img src={i.img} />
+        )}
+        {/* <img src={weatherConditions "/assets/sunny.png"} /> */}
         <Divider />
         <div>
           <h1>City</h1>

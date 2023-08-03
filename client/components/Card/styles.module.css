@@ -8,6 +8,8 @@
   background-image: linear-gradient(to bottom, var(--primary), #a6c1ee);
   width: 100%;
   margin-bottom: 2rem;
+  box-shadow: 6px 10px 29px -5px rgba(157, 157, 157, 0.27);
+  -webkit-box-shadow: 6px 10px 29px -5px rgba(157, 157, 157, 0.27);
 }
 
 .blurEffect {
@@ -24,6 +26,8 @@
   -moz-filter: blur(5px);
   -o-filter: blur(5px);
   -ms-filter: blur(5px);
+  box-shadow: 6px 10px 29px -5px rgba(157, 157, 157, 0.27);
+  -webkit-box-shadow: 6px 10px 29px -5px rgba(157, 157, 157, 0.27);
 }
 
 .cardContainer h1,
@@ -37,7 +41,9 @@
   font-size: 2rem;
 }
 
-@media (max-width: 800px) {
+
+
+@media (max-width: 820px) {
 
   .cardContainer,
   .blurEffect {
