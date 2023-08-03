@@ -1,0 +1,86 @@
+.cardContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 2rem;
+  border-radius: 10px;
+  background-image: linear-gradient(to bottom, var(--primary), #a6c1ee);
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.blurEffect {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 2rem;
+  border-radius: 10px;
+  background-image: linear-gradient(to bottom, var(--primary), #a6c1ee);
+  width: 100%;
+  margin-bottom: 2rem;
+  -webkit-filter: blur(5px);
+  -moz-filter: blur(5px);
+  -o-filter: blur(5px);
+  -ms-filter: blur(5px);
+}
+
+.cardContainer h1,
+.cardContainer p,
+.blurEffect h1,
+.blurEffect p {
+  color: white;
+}
+
+.weatherText {
+  font-size: 2rem;
+}
+
+@media (max-width: 800px) {
+
+  .cardContainer,
+  .blurEffect {
+    width: 90vw;
+    flex-direction: row;
+    padding: 1rem;
+    margin-top: 0;
+    align-items: center;
+  }
+
+  .cardContainer div {
+    max-width: 35%;
+  }
+
+  .weatherText {
+    font-size: 1rem;
+  }
+
+  .cardContainer img,
+  .blurEffect img {
+    height: 50%;
+  }
+
+  .cardContainer h1,
+  .blurEffect h1 {
+    color: white;
+    font-size: 0.9rem;
+    text-overflow: ellipsis;
+    text-align: center;
+    font-stretch: wider;
+    line-height: 20px;
+    white-space: pre-line;
+    overflow: hidden;
+  }
+
+  .cardContainer p,
+  .blurEffect p {
+    text-overflow: ellipsis;
+    width: fit-content;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+
+
+}

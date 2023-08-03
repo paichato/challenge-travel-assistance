@@ -4,8 +4,10 @@ import styles from "./styles.module.css";
 import { useRouter } from "next/router";
 import { storeCookies } from "../../lib/session";
 import { http } from "../api/http";
+import UnauthorizedDisplay from "../../components/Unauthorized";
+import nookies from "nookies";
 
-function Signup() {
+function Signup(ctx) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +30,7 @@ function Signup() {
   const handleSignup = async () => {
     setLoading(true);
     http
-      .post("users/register", { username, password })
+      .post("users/register", { username: username.toLowerCase(), password })
       .then((response) => {
         const loggedUser = response.data;
 
@@ -53,6 +55,10 @@ function Signup() {
     forceUpdate({});
     router.prefetch("/");
   }, []);
+
+  if (ctx.props.user) {
+    return <UnauthorizedDisplay />;
+  }
 
   return (
     <div className={styles.Container}>
@@ -172,5 +178,13 @@ function Signup() {
     </div>
   );
 }
+
+Signup.getInitialProps = async (ctx) => {
+  const { "xplore.token": token } = nookies.get(ctx);
+
+  if (!token) return { props: { user: null } };
+
+  return { props: { user: true } };
+};
 
 export default Signup;

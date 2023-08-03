@@ -1,16 +1,125 @@
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
-import WeatherCard from "../components/WeatherCard";
 import nookies from "nookies";
 import { http } from "./api/http";
 import { deleteCookies } from "../lib/session";
 import { useRouter } from "next/router";
 import { message } from "antd";
+import { useState } from "react";
+import Card from "../components/Card";
+
+const data = [
+  {
+    user: {},
+  },
+  {
+    weather: {
+      coord: {
+        lon: 34.8389,
+        lat: -19.8436,
+      },
+      weather: [
+        {
+          id: 803,
+          main: "Clouds",
+          description: "broken clouds",
+          icon: "04d",
+        },
+      ],
+      base: "stations",
+      main: {
+        temp: 21.05,
+        feels_like: 21.25,
+        temp_min: 21.05,
+        temp_max: 21.05,
+        pressure: 1030,
+        humidity: 78,
+      },
+      visibility: 10000,
+      wind: {
+        speed: 3.09,
+        deg: 250,
+      },
+      clouds: {
+        all: 75,
+      },
+      dt: 1691055392,
+      sys: {
+        type: 1,
+        id: 2194,
+        country: "MZ",
+        sunrise: 1691035764,
+        sunset: 1691076254,
+      },
+      timezone: 7200,
+      id: 1052373,
+      name: "Beira",
+      cod: 200,
+    },
+  },
+  {
+    country: [
+      {
+        indicator: {
+          id: "NY.GDP.MKTP.CD",
+          value: "GDP (current US$)",
+        },
+        country: {
+          id: "MZ",
+          value: "Mozambique",
+        },
+        countryiso3code: "MOZ",
+        date: "2022",
+        value: 17851491427.6765,
+        unit: "",
+        obs_status: "",
+        decimal: 0,
+      },
+      {
+        indicator: {
+          id: "NY.GDP.PCAP.CD",
+          value: "GDP per capita (current US$)",
+        },
+        country: {
+          id: "MZ",
+          value: "Mozambique",
+        },
+        countryiso3code: "MOZ",
+        date: "2022",
+        value: 541.454425499229,
+        unit: "",
+        obs_status: "",
+        decimal: 1,
+      },
+      {
+        indicator: {
+          id: "SP.POP.TOTL",
+          value: "Population, total",
+        },
+        country: {
+          id: "MZ",
+          value: "Mozambique",
+        },
+        countryiso3code: "MOZ",
+        date: "2022",
+        value: 32969518,
+        unit: "",
+        obs_status: "",
+        decimal: 0,
+      },
+    ],
+  },
+];
 
 function Home(ctx) {
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
+  const [searchInput, setsearchInput] = useState("");
+  const [fetchedData, setFetchedData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(
+    "Pesquise para exibir dados"
+  );
 
   const handleLogout = async () => {
     await deleteCookies();
@@ -21,8 +130,32 @@ function Home(ctx) {
     });
   };
 
-  const Divider = () => {
-    return <div className={styles.divider}></div>;
+  const onSearch = async () => {
+    setErrorMessage("Buscando...");
+    http
+      .get(`dashboard/travel/${encodeURIComponent(searchInput)}`)
+      .then((response) => {
+        const allData = response.data;
+        setFetchedData(allData);
+
+        messageApi.open({
+          type: "success",
+          content: "Redirecting to app",
+        });
+
+        router.replace("/");
+      })
+      .catch((error) => {
+        messageApi.open({
+          type: "error",
+          content:
+            error?.response?.data ?? "Error fetching data. Please try again, ",
+        });
+        setErrorMessage(
+          error?.response?.data ?? "Error fetching data. Please try again"
+        );
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -58,18 +191,34 @@ function Home(ctx) {
           <section className={styles.leftSection}>
             <h1>Travel assistance</h1>
             <p>
-              Liberte o explorador dentro de você e descubra os destinos mais
-              encantadores do mundo.
+              Unleash the explorer within you and discover the world's most
+              enchanting destinations.
             </p>
             <div>
-              <input placeholder="pesquisar por cidade, ex: Maputo" />
-              <button>Pesquisar</button>
+              <input
+                value={searchInput}
+                onChange={(e) => setsearchInput(e.currentTarget.value)}
+                placeholder="search for a city, ex: Maputo"
+              />
+              <button onClick={onSearch}>Pesquisar</button>
             </div>
           </section>
           <section className={styles.rightSection}>
-            <WeatherCard />
-            <WeatherCard />
-            <WeatherCard />
+            {fetchedData.length < 1 && <h1>{errorMessage}</h1>}
+            {fetchedData.map((i, index) => {
+              console.log("Helo:", Object.keys(i));
+
+              return (
+                !Object.keys(i).includes("user") && (
+                  <Card
+                    type={Object.keys(i)[0]}
+                    data={i}
+                    user={ctx.props.username ?? ""}
+                    // user={fetchedData[0]}
+                  />
+                )
+              );
+            })}
           </section>
         </div>
       </main>
@@ -90,12 +239,12 @@ function Home(ctx) {
 Home.getInitialProps = async (ctx) => {
   const { "xplore.token": token } = nookies.get(ctx);
 
-  if (!token) return { props: { user: null } };
+  if (!token) return { props: { username: null } };
 
   const response = await http
     .get("/validate-user", { headers: { Authorization: `Bearer ${token}` } })
     .then((res) => {
-      http.defaults.headers.common["Authorization"] = token;
+      http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       res.data.session = "active";
 

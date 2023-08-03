@@ -4,8 +4,10 @@ import styles from "./styles.module.css";
 import { useRouter } from "next/router";
 import { http } from "../api/http";
 import { storeCookies } from "../../lib/session";
+import UnauthorizedDisplay from "../../components/Unauthorized";
+import nookies from "nookies";
 
-function Login() {
+function Login(ctx) {
   const router = useRouter();
 
   const [username, setUsername] = useState("");
@@ -28,7 +30,7 @@ function Login() {
   const handleLogin = async () => {
     setLoading(true);
     http
-      .post("users/login", { username, password })
+      .post("users/login", { username: username.toLocaleLowerCase(), password })
       .then((response) => {
         const loggedUser = response.data;
 
@@ -54,6 +56,10 @@ function Login() {
     router.prefetch("/");
   }, []);
 
+  if (ctx.props.user) {
+    return <UnauthorizedDisplay />;
+  }
+
   return (
     <div className={styles.Container}>
       {contextHolder}
@@ -68,9 +74,6 @@ function Login() {
         }}
         style={{
           maxWidth: 600,
-        }}
-        initialValues={{
-          remember: true,
         }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
@@ -120,17 +123,6 @@ function Login() {
         </Form.Item>
 
         <Form.Item
-          name="remember"
-          valuePropName="checked"
-          wrapperCol={{
-            offset: 8,
-            span: 16,
-          }}
-        >
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
-
-        <Form.Item
           wrapperCol={{
             offset: 8,
             span: 16,
@@ -155,5 +147,13 @@ function Login() {
     </div>
   );
 }
+
+Login.getInitialProps = async (ctx) => {
+  const { "xplore.token": token } = nookies.get(ctx);
+
+  if (!token) return { props: { user: null } };
+
+  return { props: { user: true } };
+};
 
 export default Login;

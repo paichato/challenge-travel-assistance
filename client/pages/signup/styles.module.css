@@ -1,7 +1,7 @@
 .Container {
+    display: flex;
     height: 100vh;
     width: 100vw;
-    display: flex;
     flex-direction: column;
     flex: 1;
     align-items: center;
@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 600px;
+    max-width: 600px;
 }
 
 .formContainer h1 {
@@ -35,4 +35,19 @@
     align-self: center;
     color: gray;
     background-color: transparent;
+}
+
+@media (max-width: 600px) {
+    .Container {
+        align-items: center;
+        justify-content: center;
+
+    }
+
+    .formContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 }
