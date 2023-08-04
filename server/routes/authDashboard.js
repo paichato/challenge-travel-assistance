@@ -3,15 +3,6 @@ const verify = require("../middlewares/authVerify");
 const axios = require("axios");
 const router = require("express").Router();
 
-router.get("/allusers", verify, async (req, res) => {
-  try {
-    const results = await User.find().exec();
-    res.send(results);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
 router.get("/travel/:city", verify, async (req, res) => {
   const city = req.params.city;
 

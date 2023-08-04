@@ -19,7 +19,6 @@ describe("POST /api/users/login", () => {
     });
 
     expect(response.status).toBe(400);
-    console.log(response.body);
     expect(response.error.text).toBe("Username or Password is incorrect");
   });
 
@@ -29,7 +28,6 @@ describe("POST /api/users/login", () => {
     });
 
     expect(response.status).toBe(401);
-    console.log(response.body);
     expect(response.error.text).toBe("Missing username or password");
   });
 
@@ -43,7 +41,6 @@ describe("POST /api/users/register", () => {
     });
 
     expect(response.status).toBe(401);
-    console.log(response.body);
     expect(response.error.text).toBe("Missing username or password");
   });
 
@@ -53,7 +50,6 @@ describe("POST /api/users/register", () => {
     });
 
     expect(response.status).toBe(401);
-    console.log(response.body);
     expect(response.error.text).toBe("Missing username or password");
   });
 

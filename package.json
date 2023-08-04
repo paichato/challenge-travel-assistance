@@ -5,6 +5,13 @@
   "repository": "https://github.com/paichato/challenge-travel-assistance.git",
   "author": "paichato <tsenane14@gmail.com>",
   "license": "MIT",
-  "workspaces":["client/*", "server/*"],
-  "engines": {"node": "16.16.0"}
+  "engines": {"node": "16.16.0"},
+  "scripts": {
+    "install-all": "cd client && yarn && cd ../server && yarn",
+    "frontend": "cd client && yarn dev",
+    "backend": "cd /server && yarn nodemon index.js",
+    "test:frontend": "cd client && yarn jest",
+    "test:server": "cd server && yarn jest"
+
+  }
 }
