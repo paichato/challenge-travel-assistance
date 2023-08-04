@@ -3,117 +3,13 @@ import styles from "../styles/Home.module.css";
 import nookies from "nookies";
 import { http } from "./api/http";
 import { deleteCookies } from "../lib/session";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { message } from "antd";
 import { useState } from "react";
 import Card from "../components/Card";
 import CacheCard from "../components/CacheCard";
 
-const data = [
-  {
-    user: {},
-  },
-  {
-    weather: {
-      coord: {
-        lon: 34.8389,
-        lat: -19.8436,
-      },
-      weather: [
-        {
-          id: 803,
-          main: "Clouds",
-          description: "broken clouds",
-          icon: "04d",
-        },
-      ],
-      base: "stations",
-      main: {
-        temp: 21.05,
-        feels_like: 21.25,
-        temp_min: 21.05,
-        temp_max: 21.05,
-        pressure: 1030,
-        humidity: 78,
-      },
-      visibility: 10000,
-      wind: {
-        speed: 3.09,
-        deg: 250,
-      },
-      clouds: {
-        all: 75,
-      },
-      dt: 1691055392,
-      sys: {
-        type: 1,
-        id: 2194,
-        country: "MZ",
-        sunrise: 1691035764,
-        sunset: 1691076254,
-      },
-      timezone: 7200,
-      id: 1052373,
-      name: "Beira",
-      cod: 200,
-    },
-  },
-  {
-    country: [
-      {
-        indicator: {
-          id: "NY.GDP.MKTP.CD",
-          value: "GDP (current US$)",
-        },
-        country: {
-          id: "MZ",
-          value: "Mozambique",
-        },
-        countryiso3code: "MOZ",
-        date: "2022",
-        value: 17851491427.6765,
-        unit: "",
-        obs_status: "",
-        decimal: 0,
-      },
-      {
-        indicator: {
-          id: "NY.GDP.PCAP.CD",
-          value: "GDP per capita (current US$)",
-        },
-        country: {
-          id: "MZ",
-          value: "Mozambique",
-        },
-        countryiso3code: "MOZ",
-        date: "2022",
-        value: 541.454425499229,
-        unit: "",
-        obs_status: "",
-        decimal: 1,
-      },
-      {
-        indicator: {
-          id: "SP.POP.TOTL",
-          value: "Population, total",
-        },
-        country: {
-          id: "MZ",
-          value: "Mozambique",
-        },
-        countryiso3code: "MOZ",
-        date: "2022",
-        value: 32969518,
-        unit: "",
-        obs_status: "",
-        decimal: 0,
-      },
-    ],
-  },
-];
-
-function Home(ctx) {
-  const router = useRouter();
+function Home(ctx, router) {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchInput, setsearchInput] = useState("");
   const [fetchedData, setFetchedData] = useState([]);
@@ -133,9 +29,12 @@ function Home(ctx) {
   };
 
   const onSearch = async () => {
+    if (!searchInput) {
+      return;
+    }
     setErrorMessage("Buscando...");
     http
-      .get(`dashboard/travel/${encodeURIComponent(searchInput)}`)
+      .get(`dashboard/travel/${searchInput}`)
       .then((response) => {
         const allData = response.data;
         setFetchedData(allData);
@@ -183,6 +82,7 @@ function Home(ctx) {
       </Head>
 
       <main className={styles.main}>
+        {contextHolder}
         <div className={styles.nav}>
           <h2>Xplore</h2>
           <div className={styles.navSessionContainer}>
@@ -217,11 +117,15 @@ function Home(ctx) {
                 onChange={(e) => setsearchInput(e.currentTarget.value)}
                 placeholder="search for a city, ex: Maputo"
               />
-              <button onClick={onSearch}>Pesquisar</button>
+              <button onClick={onSearch}>Search</button>
             </div>
             <div className={styles.cacheContainer}>
-              {cache.map((i) => (
-                <CacheCard data={i} action={() => handleCacheSelection(i)} />
+              {cache.map((i, index) => (
+                <CacheCard
+                  key={"cache" + index}
+                  data={i}
+                  action={() => handleCacheSelection(i)}
+                />
               ))}
             </div>
           </section>
@@ -231,6 +135,7 @@ function Home(ctx) {
               return (
                 !Object.keys(i).includes("user") && (
                   <Card
+                    key={Object.keys(i)[0] + index}
                     type={Object.keys(i)[0]}
                     data={i}
                     user={ctx.props.username ?? ""}

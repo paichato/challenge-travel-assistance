@@ -3,9 +3,6 @@ import styles from "./styles.module.css";
 import Divider from "../Divider";
 
 function Card({ type, blur, user, data }) {
-  console.log("this is the type:", type);
-  console.log("this is the USER:", user);
-
   const weatherConditions = [
     { id: 800, name: "Clear", img: "/assets/sunny.png" },
     { id: 2, name: "Thunderstorm", img: "/assets/lightning.png" },
@@ -15,14 +12,6 @@ function Card({ type, blur, user, data }) {
     { id: 7, name: "Athmosphere", img: "/assets/cloudy.png" },
     { id: 801, name: "Clouds", img: "/assets/cloudy.png" },
   ];
-
-  function milFormate(value) {
-    var nf = new Intl.NumberFormat("en-IN", {
-      minimumFractionDigits: 2,
-      // maximumFractionDigits: 4,
-    });
-    return nf.format(value);
-  }
 
   if (type === "weather") {
     return (
@@ -37,7 +26,6 @@ function Card({ type, blur, user, data }) {
           (i) =>
             i.name === data?.weather?.weather[0]?.main && <img src={i.img} />
         )}
-        {/* <img src={weatherConditions "/assets/sunny.png"} /> */}
         <Divider />
         <div>
           <h1>City</h1>

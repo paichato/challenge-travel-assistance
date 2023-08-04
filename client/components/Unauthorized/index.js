@@ -1,5 +1,5 @@
 import { Button, Popconfirm, Result } from "antd";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { deleteCookies } from "../../lib/session";
 

@@ -35,8 +35,7 @@ router.post("/register", async (req, res) => {
   try {
     const { error } = await registerSchema.validateAsync(req.body);
     if (error) {
-      res.status(400).send(error.details[0].message);
-      return;
+      return res.status(400).send(error.details[0].message);
     } else {
       const savedUser = await newUser.save();
       const token = jwt.sign({ _id: savedUser._id }, process.env.TOKEN_SECRET, {
@@ -53,7 +52,7 @@ router.post("/register", async (req, res) => {
       error: err ?? "unkown details",
       message: "Error creating user",
     };
-    res.status(500).send(errorLog);
+    res.status(400).send(errorLog);
   }
 });
 

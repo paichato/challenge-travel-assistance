@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, message } from "antd";
 import styles from "./styles.module.css";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { storeCookies } from "../../lib/session";
 import { http } from "../api/http";
 import UnauthorizedDisplay from "../../components/Unauthorized";
