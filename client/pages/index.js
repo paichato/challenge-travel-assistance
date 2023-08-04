@@ -135,7 +135,7 @@ function Home(ctx) {
               return (
                 !Object.keys(i).includes("user") && (
                   <Card
-                    key={Object.keys(i)[0] + index}
+                    key={Object.keys(i)[0] + index + Date.now()}
                     type={Object.keys(i)[0]}
                     data={i}
                     user={ctx.props.username ?? ""}
