@@ -1,15 +1,16 @@
+// "use client";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import nookies from "nookies";
 import { http } from "./api/http";
 import { deleteCookies } from "../lib/session";
-import { useRouter } from "next/navigation";
+import Router from "next/router";
 import { message } from "antd";
 import { useState } from "react";
 import Card from "../components/Card";
 import CacheCard from "../components/CacheCard";
 
-function Home(ctx, router) {
+function Home(ctx) {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchInput, setsearchInput] = useState("");
   const [fetchedData, setFetchedData] = useState([]);
@@ -21,7 +22,7 @@ function Home(ctx, router) {
 
   const handleLogout = async () => {
     await deleteCookies();
-    router.reload();
+    Router.reload();
     messageApi.open({
       type: "warning",
       content: "Your session has ended.",
@@ -48,7 +49,7 @@ function Home(ctx, router) {
           content: "Redirecting to app",
         });
 
-        router.replace("/");
+        Router.replace("/");
       })
       .catch((error) => {
         messageApi.open({
@@ -82,7 +83,6 @@ function Home(ctx, router) {
       </Head>
 
       <main className={styles.main}>
-        {contextHolder}
         <div className={styles.nav}>
           <h2>Xplore</h2>
           <div className={styles.navSessionContainer}>
@@ -96,7 +96,7 @@ function Home(ctx, router) {
             ) : (
               <button
                 className={styles.navButton}
-                onClick={() => router.push("/login")}
+                onClick={() => Router.push("/login")}
               >
                 Login
               </button>

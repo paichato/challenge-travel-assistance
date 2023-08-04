@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import styles from "./styles.module.css";
-import { useRouter } from "next/navigation";
+import Router from "next/router";
 import { http } from "../api/http";
 import { storeCookies } from "../../lib/session";
 import UnauthorizedDisplay from "../../components/Unauthorized";
 import nookies from "nookies";
 
 function Login(ctx) {
-  const router = useRouter();
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,7 +38,7 @@ function Login(ctx) {
           content: "Redirecting to app",
         });
 
-        router.replace("/");
+        Router.replace("/");
       })
       .catch((error) => {
         messageApi.open({
@@ -53,7 +51,7 @@ function Login(ctx) {
 
   useEffect(() => {
     forceUpdate({});
-    router.prefetch("/");
+    Router.prefetch("/");
   }, []);
 
   if (ctx.props.user) {
@@ -62,7 +60,6 @@ function Login(ctx) {
 
   return (
     <div className={styles.Container}>
-      {contextHolder}
       <Form
         className={styles.formContainer}
         name="basic"
@@ -83,7 +80,7 @@ function Login(ctx) {
         <h1>Login</h1>
         <button
           className={styles.loginButton}
-          onClick={() => router.push("/signup")}
+          onClick={() => Router.push("/signup")}
         >
           New here? Signup
         </button>

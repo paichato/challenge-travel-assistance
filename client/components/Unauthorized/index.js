@@ -1,14 +1,12 @@
 import { Button, Popconfirm, Result } from "antd";
-import { useRouter } from "next/navigation";
+import Router from "next/router";
 import React from "react";
 import { deleteCookies } from "../../lib/session";
 
 function UnauthorizedDisplay() {
-  const router = useRouter();
-
   const confirm = (e) => {
     deleteCookies();
-    router.reload();
+    Router.reload();
   };
   const cancel = (e) => {
     return;
@@ -32,7 +30,7 @@ function UnauthorizedDisplay() {
             <Button
               type="primary"
               key="console"
-              onClick={() => router.replace("/")}
+              onClick={() => Router.replace("/")}
             >
               Go Back
             </Button>
@@ -44,7 +42,7 @@ function UnauthorizedDisplay() {
               okText="Yes"
               cancelText="No"
             >
-              <Button key="Logout">Logout</Button>,
+              <Button key="Logout-pop-confirm">Logout</Button>,
             </Popconfirm>
           </>,
         ]}

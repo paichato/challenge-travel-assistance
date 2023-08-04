@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, message } from "antd";
 import styles from "./styles.module.css";
-import { useRouter } from "next/navigation";
+import Router from "next/router";
 import { storeCookies } from "../../lib/session";
 import { http } from "../api/http";
 import UnauthorizedDisplay from "../../components/Unauthorized";
 import nookies from "nookies";
 
 function Signup(ctx) {
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -40,7 +39,7 @@ function Signup(ctx) {
           content: "Redirecting to app",
         });
 
-        router.replace("/");
+        Router.replace("/");
       })
       .catch((error) => {
         messageApi.open({
@@ -53,7 +52,7 @@ function Signup(ctx) {
 
   useEffect(() => {
     forceUpdate({});
-    router.prefetch("/");
+    Router.prefetch("/");
   }, []);
 
   if (ctx.props.user) {
@@ -62,7 +61,6 @@ function Signup(ctx) {
 
   return (
     <div className={styles.Container}>
-      {contextHolder}
       <Form
         className={styles.formContainer}
         name="basic"
@@ -86,7 +84,7 @@ function Signup(ctx) {
         <h1>Signup</h1>
         <button
           className={styles.signupButton}
-          onClick={() => router.push("/login")}
+          onClick={() => Router.push("/login")}
         >
           Have an account? Login
         </button>
